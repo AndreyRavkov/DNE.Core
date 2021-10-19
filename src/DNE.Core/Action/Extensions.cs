@@ -8,13 +8,15 @@ namespace DNE.Core.Action
         /// <summary>
         /// Try execute action
         /// </summary>
-        /// <param name="action">action</param>
-        /// <exception cref="ActionException"></exception>
-        public static void Try(System.Action action)
+        /// <param name="action">action to executes in try block</param>
+        /// <param name="catchAction">action to executes in catch block</param>
+        /// <param name="finalAction">action to executes in finally block</param>
+        public static void Try(System.Action action, Action<Exception> catchAction = null,
+                               System.Action finalAction = null)
         {
             if (action == null)
             {
-                throw new ActionException("ArgumentNullException", new ArgumentNullException(nameof(action)));
+                throw new ArgumentNullException(nameof(action));
             }
 
             try
@@ -23,63 +25,94 @@ namespace DNE.Core.Action
             }
             catch (Exception exception)
             {
-                throw new ActionException(exception.Message, exception);
+                if (catchAction == null)
+                {
+                    throw;
+                }
+                catchAction(exception);
+            }
+            finally
+            {
+                if (finalAction != null)
+                {
+                    finalAction();
+                }
             }
         }
 
         /// <summary>
         /// Try execute action
         /// </summary>
-        /// <param name="action">action</param>
-        /// <exception cref="ActionException"></exception>
-        public static async Task TryAsync(Func<Task> action)
+        /// <param name="action">action to executes in try block</param>
+        /// <param name="catchAction">action to executes in catch block</param>
+        /// <param name="finalAction">action to executes in finally block</param>
+        public static async Task TryAsync(Func<Task> action,
+                                          Func<Exception, Task> catchAction = null,
+                                          System.Action finalAction = null)
         {
             if (action == null)
             {
-                throw new ActionException("ArgumentNullException", new ArgumentNullException(nameof(action)));
+                throw new ArgumentNullException(nameof(action));
             }
 
             try
             {
-                await action();
+                await action().ConfigureAwait(false);
             }
             catch (Exception exception)
             {
-                throw new ActionException(exception.Message, exception);
+                if (catchAction == null)
+                {
+                    throw;
+                }
+                await catchAction(exception).ConfigureAwait(false);
+            }
+            finally
+            {
+                if (finalAction != null)
+                {
+                    finalAction();
+                }
             }
         }
-        
+
         /// <summary>
         /// Try execute action
         /// </summary>
-        /// <param name="action">action</param>
-        /// <exception cref="ActionException"></exception>
-        public static async Task<T> TryAsync<T>(Func<Task<T>> action)
+        /// <param name="action">action to executes in try block</param>
+        /// <param name="catchAction">action to executes in catch block</param>
+        /// <param name="finalAction">action to executes in finally block</param>
+        public static async Task<T> TryAsync<T>(Func<Task<T>> action, 
+                                             Func<Exception, Task> catchAction = null,
+                                             System.Action finalAction = null)
         {
             if (action == null)
             {
-                throw new ActionException("ArgumentNullException", new ArgumentNullException(nameof(action)));
+                throw new ArgumentNullException(nameof(action));
             }
 
+            var result = default(T);
             try
             {
-                return await action();
+                result =  await action().ConfigureAwait(false);
             }
             catch (Exception exception)
             {
-                throw new ActionException(exception.Message, exception);
+                if (catchAction == null)
+                {
+                    throw;
+                }
+                await catchAction(exception).ConfigureAwait(false);
             }
-        }
-    }
+            finally
+            {
+                if (finalAction != null)
+                {
+                    finalAction();
+                }
+            }
 
-    public class ActionException : Exception
-    {
-        public ActionException(string message) : base(message)
-        {
-        }
-
-        public ActionException(string message, Exception innerException) : base(message, innerException)
-        {
+            return result;
         }
     }
 }

@@ -53,6 +53,7 @@ namespace DNE.Core.Action
         }
     }
 
+    [Serializable]
     public class RequireException : Exception
     {
         public RequireException(string message) : base(message)
