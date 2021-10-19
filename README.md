@@ -1,0 +1,2 @@
+# DNE.Core
+.net extensions
