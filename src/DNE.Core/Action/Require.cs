@@ -18,7 +18,21 @@ namespace DNE.Core.Action
                 throw new RequireException(errorMessage, new ArgumentNullException(objectName));
             }
         }
-
+        
+        /// <summary>
+        /// Require that condition condition is valid
+        /// </summary>
+        /// <param name="condition">bool condition</param>
+        /// <param name="errorMessage">error message</param>
+        /// <exception cref="RequireException"></exception>
+        public static void That(bool condition, string errorMessage)
+        {
+            if (!condition)
+            {
+                throw new RequireException(errorMessage);
+            }
+        }
+        
         /// <summary>
         /// Require that source string should be not empty and whitespace
         /// </summary>
@@ -33,18 +47,9 @@ namespace DNE.Core.Action
             }
         }
 
-        /// <summary>
-        /// Require that condition condition is valid
-        /// </summary>
-        /// <param name="condition">bool condition</param>
-        /// <param name="errorMessage">error message</param>
-        /// <exception cref="RequireException"></exception>
-        public static void That(bool condition, string errorMessage)
+        public static void ArgMaxLength(string value, string property, int maxLength)
         {
-            if (!condition)
-            {
-                throw new RequireException(errorMessage);
-            }
+            Require.That(value.Length <= maxLength, $"{property} can't be more than {maxLength} characters length.");
         }
     }
 
