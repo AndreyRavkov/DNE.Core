@@ -2,7 +2,7 @@
 
     <PropertyGroup>
         <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
-		<PackageVersion>0.0.1</PackageVersion>
+        <PackageVersion>0.0.1</PackageVersion>
         <Title>DNE.Core</Title>
         <Authors>Andrey Ravkov</Authors>
         <Description>.net extensions</Description>

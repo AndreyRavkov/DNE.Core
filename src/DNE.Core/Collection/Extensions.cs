@@ -23,5 +23,6 @@ namespace DNE.Core.Collection
         {
             return ToList(value);
         }
+        
     }
 }
